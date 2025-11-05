@@ -22,8 +22,8 @@
 body {
   background-image: url("/desktop-bg.png");
   background-size: cover;
-  /* background-repeat: no-repeat; */
+  background-repeat: no-repeat;
   /* background-position: center; */
   /* background-attachment: fixed; */
-  /* min-height: 100vh; */
+  max-height: 100vh;
 }
