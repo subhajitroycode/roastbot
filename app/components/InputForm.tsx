@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import RadioButton from "./ui/RadioButton";
 
 const InputForm = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("soft");
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <section className="flex justify-center">
-      <form>
+      <form onSubmit={handleSubmit}>
         <textarea
           name="input-text"
           id="input-text"
@@ -43,8 +47,12 @@ const InputForm = () => {
               onChange={setSelectedDifficulty}
             />
           </div>
-          <button type="submit" className="text-white">
-            🔥 Roast Me
+          <button
+            type="submit"
+            className="text-white bg-blue-700 px-4 py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:bg-blue-600 hover:shadow-[0_0_20px_#3b82f680] cursor-pointer"
+            style={{}}
+          >
+            🔥Get Roasted
           </button>
         </div>
       </form>
