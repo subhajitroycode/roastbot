@@ -1,34 +1,36 @@
 "use client";
 
-import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
-import firebaseApp from "./utils/firebaseConfig";
+import { useState } from "react";
 import Header from "./components/Header";
 import InputForm from "./components/InputForm";
+import ResponseBox from "./components/ResponseBox";
 
 export default function Home() {
-  const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const model = getGenerativeModel(ai, {
-    model: "gemini-2.5-flash",
-    systemInstruction:
-      "You are RoastBot, an AI that tells funny and light-hearted jokes about programmers.",
-  });
-
-  const run = async () => {
-    const prompt = "Tell me a joke about programmers.";
-
-    const result = await model.generateContent(prompt);
-
-    const response = result.response;
-    const text = response.text();
-    console.log("AI Response:", text);
+  const handleSubmit = async (text: string, difficulty: string) => {
+    setLoading(true);
+    setResponse("");
+    try {
+      const { default: generateRoast } = await import("./utils/RoastGenerator");
+      const roast = await generateRoast(text, difficulty);
+      setResponse(roast);
+    } catch (error) {
+      setResponse(
+        "Probably the model is tired of roasting all day😴 Try again later!"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Header />
       <main>
-        <InputForm />
+        <InputForm onSubmit={handleSubmit} />
+        <ResponseBox response={response} loading={loading} />
       </main>
     </>
   );

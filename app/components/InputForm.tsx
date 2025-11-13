@@ -3,11 +3,17 @@
 import React, { useState } from "react";
 import RadioButton from "./ui/RadioButton";
 
-const InputForm = () => {
+interface InputFormProps {
+  onSubmit: (text: string, difficulty: string) => void;
+}
+
+const InputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("soft");
+  const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    onSubmit(text, selectedDifficulty);
   };
 
   return (
@@ -28,6 +34,7 @@ const InputForm = () => {
           onBlur={(e) => {
             e.target.style.boxShadow = "none";
           }}
+          onChange={(e) => setText(e.target.value)}
         ></textarea>
         <div className="flex justify-between items-center  mt-2 mb-4">
           <div className="flex gap-2">
