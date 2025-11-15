@@ -13,7 +13,7 @@ const generateRoast = async (
   text: string,
   difficulty: string
 ): Promise<string> => {
-  const prompt = `Roast the following text with a ${difficulty} intensity: ${text}`;
+  const prompt = `Roast the following text with a ${difficulty} intensity: ${text} and keep it under 300 characters.`;
 
   const result = await model.generateContent(prompt);
   return result.response.text();

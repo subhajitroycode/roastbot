@@ -13,7 +13,7 @@ export default function Home() {
     setLoading(true);
     setResponse("");
     try {
-      const { default: generateRoast } = await import("./utils/RoastGenerator");
+      const { default: generateRoast } = await import("./utils/roastGenerator");
       const roast = await generateRoast(text, difficulty);
       setResponse(roast);
     } catch (error) {
