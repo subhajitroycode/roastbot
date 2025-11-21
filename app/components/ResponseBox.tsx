@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import downloadRoastCard from "../utils/downloadRoast";
+import { FiCopy, FiDownload } from "react-icons/fi";
+import Button from "./ui/Button";
 
 interface ResponseBoxProps {
   response: string;
@@ -30,7 +32,7 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, loading }) => {
 
   return (
     <section className="flex justify-center mt-6">
-      <div className="w-lg h-48 p-4 text-white bg-linear-to-r from-[#003153] to-[#3d4756] border border-blue-500 rounded-lg shadow-[0_0_20px_#3b82f680]">
+      <div className="w-lg h-48 p-4 text-white bg-linear-to-r from-[#003153] to-[#3d4756] border border-blue-500 rounded-lg shadow-[0_0_20px_#3b82f680] relative">
         {loading ? (
           <div className="h-full w-full flex justify-center items-center">
             <p>Let him cook now...</p>
@@ -44,23 +46,22 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, loading }) => {
             <p>Your roast will be cooked here 😉</p>
           </div>
         )}
-      </div>
-      {!loading && response && (
-        <div className="mt-4 flex gap-2">
-          <button
-            className="px-4 py-2 bg-red-500 rounded text-white"
-            onClick={() => downloadRoastCard(response)}
-          >
-            ⬇️ Download Card
-          </button>
-          <button
-            className="px-4 py-2 bg-neutral-800 rounded text-white"
-            onClick={() => navigator.clipboard.writeText(response)}
-          >
-            📋 Copy
-          </button>
+
+        <div
+          className={`flex flex-col gap-2 absolute top-1/2 -right-1/6 transform -translate-y-1/2 transition-all duration-500 ease-out ${
+            !loading && response
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-8 pointer-events-none"
+          }`}
+        >
+          <Button onClick={() => downloadRoastCard(response)}>
+            <FiDownload className="text-2xl" />
+          </Button>
+          <Button onClick={() => navigator.clipboard.writeText(response)}>
+            <FiCopy className="text-2xl" />
+          </Button>
         </div>
-      )}
+      </div>
     </section>
   );
 };

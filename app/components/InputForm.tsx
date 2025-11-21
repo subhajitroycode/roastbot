@@ -5,9 +5,10 @@ import RadioButton from "./ui/RadioButton";
 
 interface InputFormProps {
   onSubmit: (text: string, difficulty: string) => void;
+  loading: boolean;
 }
 
-const InputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
+const InputForm: React.FC<InputFormProps> = ({ onSubmit, loading }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("soft");
   const [text, setText] = useState("");
 
@@ -56,8 +57,12 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit }) => {
           </div>
           <button
             type="submit"
-            className="text-white bg-blue-700 px-4 py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:bg-blue-600 hover:shadow-[0_0_20px_#3b82f680] cursor-pointer"
-            style={{}}
+            className={`text-white bg-blue-700 px-4 py-2 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:bg-blue-600 hover:shadow-[0_0_20px_#3b82f680] ${
+              loading
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100 cursor-pointer"
+            }`}
+            disabled={loading}
           >
             🔥Get Roasted
           </button>

@@ -13,10 +13,15 @@ const generateRoast = async (
   text: string,
   difficulty: string
 ): Promise<string> => {
-  const prompt = `Roast the following text with a ${difficulty} intensity: ${text} and keep it under 300 characters.`;
+  try {
+    const prompt = `Roast the following text with a ${difficulty} intensity: ${text} and keep it under 300 characters.`;
 
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error generating roast:", error);
+    return "Probably the model is tired of roasting all day😴 Try again later!";
+  }
 };
 
 export default generateRoast;
