@@ -1,4 +1,4 @@
-const downloadRoastCard = async (roast: string) => {
+const downloadRoastCard = async (roast: string): Promise<void> => {
   const url = `/api/og?text=${encodeURIComponent(roast)}`;
   const blob = await fetch(url).then((res) => res.blob());
   const a = document.createElement("a");
