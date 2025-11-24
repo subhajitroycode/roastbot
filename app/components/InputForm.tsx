@@ -14,7 +14,8 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, loading }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(text, selectedDifficulty);
+    if (!text.trim()) return;
+    onSubmit(text.trim(), selectedDifficulty);
   };
 
   return (
@@ -24,7 +25,7 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, loading }) => {
           name="input-text"
           id="input-text"
           placeholder="Type your bio or tweet or message or any text here..."
-          className="w-xl h-48 p-2 text-white bg-neutral-800 border border-gray-600 rounded-lg resize-none focus:outline-none focus:border-2 focus:border-red-500"
+          className="w-80 md:w-xl h-48 p-2 text-white bg-neutral-800 border border-gray-600 rounded-lg resize-none focus:outline-none focus:border-2 focus:border-red-500"
           style={{
             boxShadow: "none",
           }}
@@ -37,7 +38,7 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, loading }) => {
           }}
           onChange={(e) => setText(e.target.value)}
         ></textarea>
-        <div className="flex justify-between items-center  mt-2 mb-4">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center mt-2 mb-4">
           <div className="flex gap-2">
             <RadioButton
               value="soft"

@@ -32,7 +32,7 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, loading }) => {
 
   return (
     <section className="flex justify-center mt-6">
-      <div className="w-lg h-48 p-4 text-white bg-linear-to-r from-[#003153] to-[#3d4756] border border-blue-500 rounded-lg shadow-[0_0_20px_#3b82f680] relative">
+      <div className="w-80 md:w-lg h-48 p-4 text-white bg-linear-to-r from-[#003153] to-[#3d4756] border border-blue-500 rounded-lg shadow-[0_0_20px_#3b82f680] relative">
         {loading ? (
           <div className="h-full w-full flex justify-center items-center">
             <p>Let him cook now...</p>
@@ -48,10 +48,10 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, loading }) => {
         )}
 
         <div
-          className={`flex flex-col gap-2 absolute top-1/2 -right-1/6 transform -translate-y-1/2 transition-all duration-500 ease-out ${
+          className={`flex md:flex-col gap-2 absolute top-52 right-1/2 translate-x-1/2 md:top-1/2 md:-right-1/6 transform md:-translate-y-1/2 transition-all duration-500 ease-out ${
             !loading && response
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-8 pointer-events-none"
+              ? "opacity-100 translate-y-0 md:translate-x-0"
+              : "opacity-0 -translate-y-4 md:-translate-x-8 pointer-events-none"
           }`}
         >
           <Button onClick={() => downloadRoastCard(response)}>

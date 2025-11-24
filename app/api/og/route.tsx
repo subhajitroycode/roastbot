@@ -1,33 +1,36 @@
+// app/api/og/route.tsx
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-const loadFontFromOrigin = async (
-  req: Request,
-  publicPath: string
-): Promise<ArrayBuffer | null> => {
+// Fetch helper (works in Edge & dev)
+async function fetchArrayBuffer(req: Request, publicPath: string) {
   try {
     const origin = new URL(req.url).origin;
-    const fontUrl = `${origin}${publicPath}`;
-    const resp = await fetch(fontUrl);
-    if (!resp.ok) {
-      throw new Error(
-        `Font fetch failed: ${resp.status} ${resp.statusText} (${fontUrl})`
-      );
-    }
-    return await resp.arrayBuffer();
+    const url = `${origin}${publicPath}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch ${url}`);
+    return res.arrayBuffer();
   } catch (err) {
-    console.error("Font load failed for", publicPath, err);
+    console.error("Asset fetch failed:", publicPath, err);
     return null;
   }
-};
+}
 
-const wrapTextSimple = (text: string, maxCharsPerLine = 40): string => {
+// Convert ArrayBuffer → data:image/png;base64 URL
+async function arrayBufferToDataUrl(buffer: ArrayBuffer, mime = "image/png") {
+  const b = Buffer.from(buffer);
+  return `data:${mime};base64,${b.toString("base64")}`;
+}
+
+// Simple line wrapper for readable roasts
+function wrap(text: string, max = 40) {
   const words = text.split(" ");
-  const lines: string[] = [];
+  let lines: string[] = [];
   let line = "";
+
   for (const w of words) {
-    if ((line + " " + w).trim().length > maxCharsPerLine) {
+    if ((line + " " + w).trim().length > max) {
       lines.push(line.trim());
       line = w;
     } else {
@@ -36,90 +39,106 @@ const wrapTextSimple = (text: string, maxCharsPerLine = 40): string => {
   }
   if (line) lines.push(line);
   return lines.join("\n");
-};
+}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const rawText = String(searchParams.get("text") || "Roastbot");
+
+  const rawText =
+    searchParams.get("text") ||
+    "You look like a software update — unnecessary and badly timed.";
   const text = rawText.slice(0, 400);
+  const wrapped = wrap(text, 40);
 
-  const fontPublicPath = "/fonts/Montserrat-Regular.ttf";
+  // Load assets from public/
+  const fontBuf = await fetchArrayBuffer(req, "/fonts/Montserrat-Regular.ttf");
+  const logoBuf = await fetchArrayBuffer(req, "/logo.png");
 
-  const fontData = await loadFontFromOrigin(req, fontPublicPath);
-
-  if (!fontData) {
-    console.error(
-      `Failed to load font at ${fontPublicPath}. Make sure the file exists at public${fontPublicPath} and your dev server is running.`
-    );
+  if (!fontBuf) {
     return new Response(
       JSON.stringify({
-        error: `Failed to load font at ${fontPublicPath}. Ensure the font file exists under public${fontPublicPath} and restart dev server.`,
+        error:
+          "Missing Montserrat font. Put it in public/fonts/Montserrat-Regular.ttf",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 
-  try {
-    const wrapped = wrapTextSimple(text, 40);
+  let logoDataUrl: string | null = null;
+  if (logoBuf) logoDataUrl = await arrayBufferToDataUrl(logoBuf);
 
-    return new ImageResponse(
-      (
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(180deg,#0f1724,#06070a)",
+          color: "#ffffff",
+          padding: 80,
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          fontFamily: "Montserrat",
+        }}
+      >
+        {/* Logo */}
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 40 }}
+        >
+          {logoDataUrl ? (
+            <img
+              src={logoDataUrl}
+              alt="RoastBot"
+              width={320}
+              height={110}
+              style={{ objectFit: "contain" }}
+            />
+          ) : (
+            <div style={{ fontSize: 48, fontWeight: 700 }}>RoastBot</div>
+          )}
+        </div>
+
+        {/* Roast Text */}
         <div
           style={{
-            width: "100%",
-            height: "100%",
+            fontSize: 56,
+            whiteSpace: "pre-wrap",
+            lineHeight: 1.14,
+            flex: 1,
             display: "flex",
-            flexDirection: "column",
-            padding: 80,
-            background: "linear-gradient(180deg,#0f1724,#0a0f15)",
-            color: "#fff",
-            fontFamily: "Montserrat",
+            alignItems: "center",
+            textShadow: "0 6px 18px rgba(0,0,0,0.6)",
           }}
         >
-          <div style={{ fontSize: 36, opacity: 0.85 }}>RoastBot 🔥</div>
-
-          <div
-            style={{
-              marginTop: 40,
-              fontSize: 56,
-              lineHeight: 1.12,
-              whiteSpace: "pre-wrap",
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {wrapped}
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              right: 80,
-              bottom: 60,
-              fontSize: 20,
-              opacity: 0.7,
-            }}
-          >
-            roastbot.app
-          </div>
+          {wrapped}
         </div>
-      ),
-      {
-        width: 1080,
-        height: 1350,
-        fonts: [
-          {
-            name: "Montserrat",
-            data: fontData,
-            style: "normal",
-            weight: 400,
-          },
-        ],
-      }
-    );
-  } catch (err) {
-    console.error("OG generation error:", err);
-    throw err;
-  }
+
+        {/* Footer */}
+        <div
+          style={{
+            position: "absolute",
+            right: 80,
+            bottom: 60,
+            fontSize: 20,
+            opacity: 0.7,
+          }}
+        >
+          roastbot.app
+        </div>
+      </div>
+    ),
+    {
+      width: 1080,
+      height: 1350,
+      fonts: [
+        {
+          name: "Montserrat",
+          data: fontBuf,
+          weight: 400,
+          style: "normal",
+        },
+      ],
+    }
+  );
 }
