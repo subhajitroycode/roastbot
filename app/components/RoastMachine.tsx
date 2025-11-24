@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import generateRoast from "../utils/roastGenerator";
+import generateRoast from "@/app/utils/roastGenerator";
 import InputForm from "./InputForm";
 import ResponseBox from "./ResponseBox";
 
