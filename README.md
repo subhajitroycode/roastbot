@@ -16,11 +16,8 @@ A playful AI-powered web app that roasts your bios, tweets, or any text with sty
 RoastBot isn't just a generic AI; it's prompted to act as a "chaos gremlin with a PhD in stylish burns." It is designed to be:
 
 - Sharp and dramatic.
-
 - Unreasonably confident.
-
 - Stupidly funny.
-  
 - **Safety First**: It refuses to generate hate speech, slurs, or threats, deflecting unsafe requests with playful refusals.
 
 ## 🌐 Deployment
