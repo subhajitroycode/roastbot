@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  background-image: url("/desktop-bg.png");
+  background-image: url("/desktop-bg.webp");
   background-size: cover;
   background-repeat: no-repeat;
   min-height: calc(100vh - 16px);
@@ -10,6 +10,6 @@ body {
 
 @media (width <= 620px) {
   body {
-    background-image: url("/mobile-bg.png");
+    background-image: url("/mobile-bg.webp");
   }
 }
